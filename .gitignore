@@ -1,0 +1,26 @@
+# Composer dependencies
+/vendor/
+
+# PHPStorm project files (if you use PHPStorm IDE)
+/.idea/
+
+# VS Code settings folder
+.vscode/
+
+# Logs and cache files
+*.log
+cache/
+tmp/
+
+# Environment variables file
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# PHPUnit result cache
+.phpunit.result.cache
+
+# Composer PHAR
+composer.phar

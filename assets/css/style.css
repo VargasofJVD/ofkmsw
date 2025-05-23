@@ -1,0 +1,127 @@
+/**
+ * Custom CSS for Krisah Montessori School Website
+ * This file contains custom styles beyond what Tailwind provides
+ */
+
+/* Global Styles */
+body {
+    scroll-behavior: smooth;
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Custom Form Styles */
+.form-input:focus {
+    border-color: #2A5674;
+    box-shadow: 0 0 0 3px rgba(42, 86, 116, 0.2);
+}
+
+/* Gallery Image Hover Effect */
+.gallery-item {
+    overflow: hidden;
+}
+
+.gallery-item img {
+    transition: transform 0.5s ease;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.05);
+}
+
+/* Custom Button Styles */
+.btn-primary {
+    background-color: #2A5674;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #1A3A50;
+}
+
+.btn-secondary {
+    background-color: #F78C0C;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background-color: #D67600;
+}
+
+/* Custom Card Styles */
+.card {
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* Testimonial Quote Style */
+.testimonial-quote {
+    position: relative;
+}
+
+.testimonial-quote::before {
+    content: '\201C';
+    font-size: 4rem;
+    position: absolute;
+    left: -1rem;
+    top: -2rem;
+    opacity: 0.2;
+    font-family: Georgia, serif;
+}
+
+/* Admin Dashboard Styles */
+.admin-sidebar {
+    background-color: #1A3A50;
+    min-height: calc(100vh - 64px);
+}
+
+.admin-sidebar a {
+    color: rgba(255, 255, 255, 0.7);
+    transition: color 0.3s ease, background-color 0.3s ease;
+    border-radius: 0.25rem;
+    margin: 0.25rem 0;
+}
+
+.admin-sidebar a:hover, 
+.admin-sidebar a.active {
+    color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+    
+    h1 {
+        font-size: 1.875rem;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+    }
+}

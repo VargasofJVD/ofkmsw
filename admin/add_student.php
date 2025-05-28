@@ -38,6 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $class = trim($_POST['class'] ?? '');
         $admission_date = trim($_POST['admission_date'] ?? '');
         
+        // Generate a unique student ID
+        $student_id = uniqid('STU_', true); // Prefix with STU_ for clarity
+
         // Store submitted data to repopulate form in case of error
         $form_data = $_POST;
 
@@ -46,10 +49,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception('All fields are required.');
         }
 
-        // Assuming a 'students' table with columns: id, first_name, last_name, class, admission_date, created_at, updated_at
+        // Assuming a 'students' table with columns: id, student_id, first_name, last_name, class, admission_date, created_at, updated_at
         // Prepare and execute INSERT statement
-        $stmt = $db->prepare("INSERT INTO students (first_name, last_name, class, admission_date) VALUES (?, ?, ?, ?)");
-        $stmt->execute([$first_name, $last_name, $class, $admission_date]);
+        $stmt = $db->prepare("INSERT INTO students (student_id, first_name, last_name, class, admission_date) VALUES (?, ?, ?, ?, ?)");
+        $stmt->execute([$student_id, $first_name, $last_name, $class, $admission_date]);
         
         $success = 'Student added successfully!';
         

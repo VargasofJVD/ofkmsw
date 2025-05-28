@@ -16,6 +16,7 @@ require_once '../config/database.php';
 // Initialize variables
 $success_message = '';
 $error_message = '';
+$form_submitted = false;
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -37,14 +38,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception('Please enter a valid email address.');
         }
         
-        // Insert into contact_messages table
-        $stmt = $db->prepare("INSERT INTO contact_messages (name, email, phone, subject, message) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([$name, $email, $phone, $subject, $message]);
+        // Insert into messages table
+        $stmt = $db->prepare("INSERT INTO messages (name, email, subject, message) VALUES (?, ?, ?, ?)");
+        $stmt->execute([$name, $email, $subject, $message]);
         
         // Send notification email to admin (optional)
         // mail($admin_email, "New Contact Form Submission: $subject", $message, "From: $email");
         
         $success_message = 'Thank you for your message! We will get back to you soon.';
+        $form_submitted = true;
         
     } catch (Exception $e) {
         $error_message = $e->getMessage();
@@ -131,59 +133,66 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <div class="bg-white shadow-md rounded-lg p-8">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6">Send Us a Message</h2>
                     
-                    <?php if ($success_message): ?>
-                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-6" role="alert">
-                            <span class="block sm:inline"><?php echo htmlspecialchars($success_message); ?></span>
-                        </div>
-                    <?php endif; ?>
-                    
                     <?php if ($error_message): ?>
                         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-6" role="alert">
                             <span class="block sm:inline"><?php echo htmlspecialchars($error_message); ?></span>
                         </div>
                     <?php endif; ?>
                     
-                    <form method="post" action="">
-                        <div class="mb-4">
-                            <label for="name" class="block text-gray-700 font-medium mb-2">Your Name *</label>
-                            <input type="text" id="name" name="name" required
-                                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                                   value="<?php echo htmlspecialchars($_POST['name'] ?? ''); ?>">
+                    <?php if ($form_submitted): ?>
+                        <div class="text-center py-8">
+                            <div class="mb-4">
+                                <i class="fas fa-check-circle text-green-500 text-5xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold text-gray-800 mb-2">Message Sent Successfully!</h3>
+                            <p class="text-gray-600 mb-6"><?php echo htmlspecialchars($success_message); ?></p>
+                            <a href="contact.php" class="inline-block bg-primary hover:bg-primary-dark text-white font-bold py-2 px-6 rounded-lg transition duration-300">
+                                Send Another Message
+                            </a>
                         </div>
-                        
-                        <div class="mb-4">
-                            <label for="email" class="block text-gray-700 font-medium mb-2">Your Email *</label>
-                            <input type="email" id="email" name="email" required
-                                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                                   value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>">
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="phone" class="block text-gray-700 font-medium mb-2">Phone Number</label>
-                            <input type="tel" id="phone" name="phone"
-                                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                                   value="<?php echo htmlspecialchars($_POST['phone'] ?? ''); ?>">
-                        </div>
-                        
-                        <div class="mb-4">
-                            <label for="subject" class="block text-gray-700 font-medium mb-2">Subject *</label>
-                            <input type="text" id="subject" name="subject" required
-                                   class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
-                                   value="<?php echo htmlspecialchars($_POST['subject'] ?? ''); ?>">
-                        </div>
-                        
-                        <div class="mb-6">
-                            <label for="message" class="block text-gray-700 font-medium mb-2">Your Message *</label>
-                            <textarea id="message" name="message" required rows="6"
-                                      class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"><?php echo htmlspecialchars($_POST['message'] ?? ''); ?></textarea>
-                        </div>
-                        
-                        <div class="text-center">
-                            <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-3 px-8 rounded-lg transition duration-300">
-                                Send Message
-                            </button>
-                        </div>
-                    </form>
+                    <?php else: ?>
+                        <form method="post" action="">
+                            <div class="mb-4">
+                                <label for="name" class="block text-gray-700 font-medium mb-2">Your Name *</label>
+                                <input type="text" id="name" name="name" required
+                                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                       value="<?php echo htmlspecialchars($_POST['name'] ?? ''); ?>">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="email" class="block text-gray-700 font-medium mb-2">Your Email *</label>
+                                <input type="email" id="email" name="email" required
+                                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                       value="<?php echo htmlspecialchars($_POST['email'] ?? ''); ?>">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="phone" class="block text-gray-700 font-medium mb-2">Phone Number</label>
+                                <input type="tel" id="phone" name="phone"
+                                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                       value="<?php echo htmlspecialchars($_POST['phone'] ?? ''); ?>">
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label for="subject" class="block text-gray-700 font-medium mb-2">Subject *</label>
+                                <input type="text" id="subject" name="subject" required
+                                       class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                                       value="<?php echo htmlspecialchars($_POST['subject'] ?? ''); ?>">
+                            </div>
+                            
+                            <div class="mb-6">
+                                <label for="message" class="block text-gray-700 font-medium mb-2">Your Message *</label>
+                                <textarea id="message" name="message" required rows="6"
+                                          class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"><?php echo htmlspecialchars($_POST['message'] ?? ''); ?></textarea>
+                            </div>
+                            
+                            <div class="text-center">
+                                <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-3 px-8 rounded-lg transition duration-300">
+                                    Send Message
+                                </button>
+                            </div>
+                        </form>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

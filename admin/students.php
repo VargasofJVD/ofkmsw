@@ -26,6 +26,18 @@ $admin_role = $_SESSION['admin_role'] ?? 'staff';
 $error = '';
 $success = '';
 
+// Check for messages from other pages (like delete_student.php)
+$redirect_message = filter_input(INPUT_GET, 'message', FILTER_SANITIZE_STRING);
+$message_type = filter_input(INPUT_GET, 'type', FILTER_SANITIZE_STRING);
+
+if (!empty($redirect_message)) {
+    if ($message_type === 'success') {
+        $success = $redirect_message;
+    } else {
+        $error = $redirect_message;
+    }
+}
+
 // Handle Add/Edit/Delete actions (placeholder)
 // if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 //     try {
@@ -63,7 +75,8 @@ try {
         /* Add any specific styles for this page here */
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
+<!-- <body class="bg-gray-100 min-h-screen"> -->
+<body class="bg-gray-900 font-sans min-h-screen flex flex-col">
     <!-- Header -->
     <header class="bg-primary text-white shadow-md">
         <div class="container mx-auto px-4 py-4">
@@ -140,9 +153,9 @@ try {
                 </div>
             <?php endif; ?>
             
-            <!-- Add Student Button (Placeholder) -->
+            <!-- Add Student Button -->
             <div class="mb-6 text-right">
-                <a href="add_student.php" class="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded">
+                <a href="add_student.php" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
                     <i class="fas fa-plus"></i> Add New Student
                 </a>
             </div>

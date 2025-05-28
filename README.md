@@ -1,3 +1,7 @@
+My go to Git
+
+
+
 # Krisah Montessori School Website
 
 A professional, responsive school website for Krisah Montessori School, located in the Western Region of Ghana. The site reflects the values of a Montessori education system—calm, learner-centered, and community-driven.

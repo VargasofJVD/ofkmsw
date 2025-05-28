@@ -60,6 +60,7 @@ try {
     // Get filter parameters
     $status_filter = $_GET['status'] ?? 'all';
     $class_filter = $_GET['class'] ?? 'all';
+    $search_term = trim($_GET['search'] ?? '');
     
     // Build query
     $query = "SELECT * FROM admission_forms WHERE 1=1";
@@ -73,6 +74,13 @@ try {
     if ($class_filter !== 'all') {
         $query .= " AND applying_for_class = ?";
         $params[] = $class_filter;
+    }
+    
+    if (!empty($search_term)) {
+        $query .= " AND (child_first_name LIKE ? OR child_last_name LIKE ? OR parent_email LIKE ?)";
+        $params[] = '%' . $search_term . '%';
+        $params[] = '%' . $search_term . '%';
+        $params[] = '%' . $search_term . '%';
     }
     
     $query .= " ORDER BY created_at DESC";
@@ -100,7 +108,7 @@ try {
         #viewModal.hidden { display: none !important; }
     </style>
 </head>
-<body class="bg-gray-900 min-h-screen">
+<body class="bg-gray-900 font-sans min-h-screen flex flex-col">
 <!-- <body class="bg-gray-50 font-sans min-h-screen flex flex-col"> -->
     <!-- Header -->
     <header class="bg-primary text-white shadow-md">
@@ -197,8 +205,15 @@ try {
                         </select>
                     </div>
                     
+                    <div>
+                        <label for="search" class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+                        <input type="text" id="search" name="search" placeholder="Search by name or email..."
+                               class="rounded-md border-blue-900 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+                               value="<?php echo htmlspecialchars($_GET['search'] ?? ''); ?>">
+                    </div>
+                    
                     <div class="flex items-end">
-                        <button type="submit" class="bg-primary hover:bg-primary-dark text-white font-bold py-2 px-4 rounded">
+                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
                             Apply Filters
                         </button>
                     </div>
@@ -227,6 +242,7 @@ try {
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($admission_forms as $form): ?>
+                                    <?php $status = $form['status'] ?? 'pending'; ?>
                                     <tr>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm font-medium text-gray-900">
@@ -260,10 +276,10 @@ try {
                                                 'pending' => 'bg-yellow-100 text-yellow-800',
                                                 'approved' => 'bg-green-100 text-green-800',
                                                 'rejected' => 'bg-red-100 text-red-800'
-                                            ][$form['status'] ?? 'pending'];
+                                            ][$status];
                                             ?>
                                             <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full <?php echo $status_class; ?>">
-                                                <?php echo ucfirst($form['status'] ?? 'pending'); ?>
+                                                <?php echo ucfirst($status); ?>
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -271,7 +287,7 @@ try {
                                                 <button onclick="viewApplication(<?php echo $form['id']; ?>)" class="text-primary hover:text-primary-dark">
                                                     <i class="fas fa-eye"></i> View
                                                 </button>
-                                                <?php if ($form['status'] === 'pending'): ?>
+                                                <?php if ($status === 'pending'): ?>
                                                     <form method="post" class="inline">
                                                         <input type="hidden" name="form_id" value="<?php echo $form['id']; ?>">
                                                         <input type="hidden" name="action" value="approve">

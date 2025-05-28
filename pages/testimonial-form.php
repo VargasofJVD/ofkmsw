@@ -92,6 +92,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <?php if ($success_message): ?>
                 <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-8" role="alert">
                     <span class="block sm:inline"><?php echo htmlspecialchars($success_message); ?></span>
+                    <div class="mt-4 text-center">
+                        <a href="testimonials.php" class="inline-block bg-primary hover:bg-primary-dark text-white font-bold py-2 px-6 rounded-lg transition duration-300">
+                            Return to Testimonials
+                        </a>
+                    </div>
                 </div>
             <?php endif; ?>
             
@@ -101,6 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
             <?php endif; ?>
             
+            <?php if (!$success_message): ?>
             <form method="post" enctype="multipart/form-data" class="bg-white shadow-md rounded-lg p-8">
                 <div class="mb-6">
                     <label for="name" class="block text-gray-700 font-medium mb-2">Your Name *</label>
@@ -162,6 +168,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </button>
                 </div>
             </form>
+            <?php endif; ?>
         </div>
     </div>
 </section>

@@ -26,6 +26,8 @@ $admin_role = $_SESSION['admin_role'] ?? 'staff';
 $error = '';
 $success = '';
 $form_data = [];
+$allowed_grades = ['Day Care', 'Nursery 1', 'Nursery 2', 'K.G. 1', 'K.G. 2', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4', 'Grade 5', 'Grade 6', 'Grade 7', 'Grade 8', 'Grade 9']; // Added grades for JHS
+$allowed_genders = ['Male', 'Female', 'Other']; // Assuming possible genders
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -37,6 +39,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $last_name = trim($_POST['last_name'] ?? '');
         $class = trim($_POST['class'] ?? '');
         $admission_date = trim($_POST['admission_date'] ?? '');
+        $registration_number = trim($_POST['registration_number'] ?? ''); // Added
+        $grade = trim($_POST['grade'] ?? ''); // Added
+        $gender = trim($_POST['gender'] ?? ''); // Added
+        $age = trim($_POST['age'] ?? ''); // Added
         
         // Generate a unique student ID
         $student_id = uniqid('STU_', true); // Prefix with STU_ for clarity
@@ -49,15 +55,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             throw new Exception('All fields are required.');
         }
 
-        // Assuming a 'students' table with columns: id, student_id, first_name, last_name, class, admission_date, created_at, updated_at
+        // Assuming a 'students' table with columns: id, student_id, first_name, last_name, class, admission_date, registration_number, grade, gender, age, created_at, updated_at
         // Prepare and execute INSERT statement
-        $stmt = $db->prepare("INSERT INTO students (student_id, first_name, last_name, class, admission_date) VALUES (?, ?, ?, ?, ?)");
-        $stmt->execute([$student_id, $first_name, $last_name, $class, $admission_date]);
+        $stmt = $db->prepare("INSERT INTO students (student_id, first_name, last_name, class, admission_date, registration_number, grade, gender, age) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        $stmt->execute([$student_id, $first_name, $last_name, $class, $admission_date, $registration_number, $grade, $gender, $age]); // Added new fields
         
         $success = 'Student added successfully!';
         
         // Clear form data after successful submission
         $form_data = [];
+
+        // Check which button was clicked
+        if (isset($_POST['save_and_close'])) {
+            // Redirect to students list page after saving and closing
+            header('Location: students.php?message=Student added successfully!&type=success');
+            exit;
+        } else {
+            // Stay on the add student page to add another student (default behavior for Save and Add Another)
+            // The success message will be displayed and the form cleared.
+        }
 
     } catch (Exception $e) {
         $error = 'An error occurred: ' . $e->getMessage();
@@ -190,6 +206,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <option value="Grade 4" <?php echo (($form_data['class'] ?? '') === 'Grade 4') ? 'selected' : ''; ?>>Grade 4</option>
                             <option value="Grade 5" <?php echo (($form_data['class'] ?? '') === 'Grade 5') ? 'selected' : ''; ?>>Grade 5</option>
                             <option value="Grade 6" <?php echo (($form_data['class'] ?? '') === 'Grade 6') ? 'selected' : ''; ?>>Grade 6</option>
+                             <option value="Grade 7" <?php echo (($form_data['class'] ?? '') === 'Grade 7') ? 'selected' : ''; ?>>Grade 7 (JHS 1)</option>
+                             <option value="Grade 8" <?php echo (($form_data['class'] ?? '') === 'Grade 8') ? 'selected' : ''; ?>>Grade 8 (JHS 2)</option>
+                             <option value="Grade 9" <?php echo (($form_data['class'] ?? '') === 'Grade 9') ? 'selected' : ''; ?>>Grade 9 (JHS 3)</option>
                         </select>
                     </div>
                     
@@ -201,9 +220,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                     
                     <div>
-                        <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-                            Add Student
+                        <label for="age" class="block text-sm font-medium text-gray-700">Age</label>
+                        <input type="number" id="age" name="age"
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+                               value="<?php echo htmlspecialchars($form_data['age'] ?? ''); ?>">
+                    </div>
+                    
+                    <div>
+                        <label for="registration_number" class="block text-sm font-medium text-gray-700">Registration Number</label>
+                        <input type="text" id="registration_number" name="registration_number"
+                               class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50"
+                               value="<?php echo htmlspecialchars($form_data['registration_number'] ?? ''); ?>">
+                    </div>
+
+                    <div>
+                        <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
+                        <select id="gender" name="gender"
+                                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50">
+                            <option value="">Select Gender</option>
+                            <option value="Male" <?php echo (($form_data['gender'] ?? '') === 'Male') ? 'selected' : ''; ?>>Male</option>
+                            <option value="Female" <?php echo (($form_data['gender'] ?? '') === 'Female') ? 'selected' : ''; ?>>Female</option>
+                            <option value="Other" <?php echo (($form_data['gender'] ?? '') === 'Other') ? 'selected' : ''; ?>>Other</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <button type="submit" name="save_and_add_another" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
+                            Save and Add Another
                         </button>
+                        <button type="submit" name="save_and_close" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded ml-2">
+                            Save and Close
+                        </button>
+                        <a href="students.php" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded ml-2">
+                            Close
+                        </a>
                     </div>
                 </form>
             </div>

@@ -25,6 +25,13 @@ $admin_role = $_SESSION['admin_role'] ?? 'staff';
 // Initialize variables
 $error = '';
 $success = '';
+$search_query = '';
+$total_students = 0;
+$early_childhood_students = 0;
+$lower_primary_students = 0;
+$upper_primary_students = 0;
+$jhs_students = 0;
+$search_result_count = 0;
 
 // Check for messages from other pages (like delete_student.php)
 $redirect_message = filter_input(INPUT_GET, 'message', FILTER_SANITIZE_STRING);
@@ -52,9 +59,39 @@ if (!empty($redirect_message)) {
 // Get students data
 try {
     $db = getDbConnection();
-    // Fetch all students (or apply filters later)
-    $stmt = $db->query("SELECT * FROM students ORDER BY admission_date DESC"); // Assuming 'students' table and 'admission_date' column
+    
+    // Check if a search query is present
+    if (isset($_GET['searchStudent']) && !empty($_GET['searchStudent'])) {
+        $search_query = filter_input(INPUT_GET, 'searchStudent', FILTER_SANITIZE_STRING);
+        // Fetch students matching the search query (by name or registration number)
+        $stmt = $db->prepare("SELECT * FROM students WHERE first_name LIKE :search_query OR last_name LIKE :search_query OR registration_number LIKE :search_query ORDER BY admission_date DESC");
+        $stmt->bindValue(':search_query', '%' . $search_query . '%', PDO::PARAM_STR);
+        $stmt->execute();
+    } else {
+        // Fetch all students
+        $stmt = $db->query("SELECT * FROM students ORDER BY admission_date DESC");
+    }
+    
     $students = $stmt->fetchAll();
+    
+    // Fetch student counts for statistics
+    $total_students_stmt = $db->query("SELECT COUNT(*) FROM students");
+    $total_students = $total_students_stmt->fetchColumn();
+
+    $early_childhood_stmt = $db->query("SELECT COUNT(*) FROM students WHERE grade < 1"); // Assuming grades less than 1 for Day Care/Early Childhood
+    $early_childhood_students = $early_childhood_stmt->fetchColumn();
+
+    $lower_primary_stmt = $db->query("SELECT COUNT(*) FROM students WHERE grade BETWEEN 1 AND 3");
+    $lower_primary_students = $lower_primary_stmt->fetchColumn();
+
+    $upper_primary_stmt = $db->query("SELECT COUNT(*) FROM students WHERE grade BETWEEN 4 AND 6");
+    $upper_primary_students = $upper_primary_stmt->fetchColumn();
+
+    $jhs_students_stmt = $db->query("SELECT COUNT(*) FROM students WHERE grade BETWEEN 7 AND 9"); // Assuming grades 7-9 for JHS
+    $jhs_students = $jhs_students_stmt->fetchColumn();
+
+    // If there's a search query, also get the count of search results
+    $search_result_count = count($students);
     
 } catch (PDOException $e) {
     $error = 'An error occurred while loading student data.';
@@ -141,6 +178,61 @@ try {
                 <h1 class="text-2xl font-bold text-gray-800">Students Management</h1>
             </div>
             
+            <!-- Statistics Section -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                <!-- Search Result Card -->
+                <div class="bg-white rounded-lg shadow-md p-6 flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">Search Result</p>
+                        <h2 class="text-3xl font-bold text-gray-800"><?php echo $search_result_count; ?></h2>
+                    </div>
+                    <i class="fas fa-search text-3xl text-blue-500"></i>
+                </div>
+                
+                <!-- Total Students Card -->
+                <div class="bg-white rounded-lg shadow-md p-6 flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">Total Students</p>
+                        <h2 class="text-3xl font-bold text-gray-800"><?php echo $total_students; ?></h2>
+                    </div>
+                    <i class="fas fa-users text-3xl text-green-500"></i>
+                </div>
+                
+                <!-- Early Childhood Card -->
+                <div class="bg-white rounded-lg shadow-md p-6 flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">Early Childhood (< Grade 1)</p>
+                        <h2 class="text-3xl font-bold text-gray-800"><?php echo $early_childhood_students; ?></h2>
+                    </div>
+                    <i class="fas fa-child text-3xl text-yellow-500"></i>
+                </div>
+                
+                <!-- Lower Primary Card -->
+                <div class="bg-white rounded-lg shadow-md p-6 flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">Lower Primary (Grades 1-3)</p>
+                        <h2 class="text-3xl font-bold text-gray-800"><?php echo $lower_primary_students; ?></h2>
+                    </div>
+                    <i class="fas fa-school text-3xl text-orange-500"></i>
+                </div>
+                 <!-- Upper Primary Card -->
+                <div class="bg-white rounded-lg shadow-md p-6 flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">Upper Primary (Grades 4-6)</p>
+                        <h2 class="text-3xl font-bold text-gray-800"><?php echo $upper_primary_students; ?></h2>
+                    </div>
+                    <i class="fas fa-school text-3xl text-red-500"></i>
+                </div>
+                 <!-- JHS Card -->
+                <div class="bg-white rounded-lg shadow-md p-6 flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-500">JHS (Grades 7-9)</p>
+                        <h2 class="text-3xl font-bold text-gray-800"><?php echo $jhs_students; ?></h2>
+                    </div>
+                    <i class="fas fa-university text-3xl text-purple-500"></i>
+                </div>
+            </div>
+            
             <?php if ($error): ?>
                 <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6" role="alert">
                     <p><?php echo htmlspecialchars($error); ?></p>
@@ -154,7 +246,11 @@ try {
             <?php endif; ?>
             
             <!-- Add Student Button -->
-            <div class="mb-6 text-right">
+            <div class="mb-6 text-right flex justify-between items-center">
+                <!-- Search Input -->
+                <div class="w-1/3">
+                    <input type="text" id="searchStudent" name="searchStudent" placeholder="Search student by ID or Name" class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300 text-gray-700" value="<?php echo htmlspecialchars($search_query); ?>">
+                </div>
                 <a href="add_student.php" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
                     <i class="fas fa-plus"></i> Add New Student
                 </a>
@@ -166,16 +262,18 @@ try {
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead class="bg-gray-50">
                             <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Class</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Admission Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Full Name</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Reg Num</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Grade</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Gender</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Age</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="bg-white divide-y divide-gray-200">
                             <?php if (empty($students)): ?>
                                 <tr>
-                                    <td colspan="4" class="px-6 py-4 text-center text-gray-500">No students found.</td>
+                                    <td colspan="6" class="px-6 py-4 text-center text-gray-500">No students found.</td>
                                 </tr>
                             <?php else: ?>
                                 <?php foreach ($students as $student): ?>
@@ -187,16 +285,29 @@ try {
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-gray-900">
-                                                <?php echo htmlspecialchars($student['class'] ?? ''); ?>
+                                                <?php echo htmlspecialchars($student['registration_number'] ?? ''); ?>
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <div class="text-sm text-gray-900">
-                                                <?php echo date('M d, Y', strtotime($student['admission_date'] ?? 'now')); ?>
+                                                <?php echo htmlspecialchars($student['grade'] ?? ''); ?>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">
+                                                <?php echo htmlspecialchars($student['gender'] ?? ''); ?>
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap">
+                                            <div class="text-sm text-gray-900">
+                                                <?php echo htmlspecialchars($student['age'] ?? ''); ?>
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <div class="flex space-x-2">
+                                                <a href="view_student.php?id=<?php echo $student['id'] ?? ''; ?>" class="text-blue-600 hover:text-blue-900">
+                                                    <i class="fas fa-eye"></i> View
+                                                </a>
                                                 <a href="edit_student.php?id=<?php echo $student['id'] ?? ''; ?>" class="text-indigo-600 hover:text-indigo-900">
                                                     <i class="fas fa-edit"></i> Edit
                                                 </a>

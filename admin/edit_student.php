@@ -245,6 +245,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
                                 Update Student
                             </button>
+                            <a href="students.php" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded ml-2">
+                                Close
+                            </a>
                         </div>
                     </form>
                 </div>

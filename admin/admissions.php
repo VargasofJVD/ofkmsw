@@ -36,10 +36,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $action = $_POST['action'];
             
             if ($action === 'approve') {
-                // Update admission form status
-                $stmt = $db->prepare("UPDATE admission_forms SET status = 'approved', is_processed = 1 WHERE id = ?");
-                $stmt->execute([$form_id]);
-                $success = 'Application has been approved.';
+                // First, fetch the admission form data
+                $stmt_fetch = $db->prepare("SELECT * FROM admission_forms WHERE id = ?");
+                $stmt_fetch->execute([$form_id]);
+                $admission_data = $stmt_fetch->fetch(PDO::FETCH_ASSOC);
+
+                if ($admission_data) {
+                    // Generate a unique student ID
+                    $student_id = uniqid('STU_', true); // Prefix with STU_ for clarity
+
+                    // Insert data into the students table
+                    // Assuming the following columns exist in admission_forms and students tables.
+                    // Adjust column names as per your actual database schema.
+                    $stmt_insert = $db->prepare("INSERT INTO students (student_id, first_name, last_name, class, admission_date, registration_number, grade, gender, age, parent_name, parent_phone, parent_email, address, city, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                    
+                    // Map data from admission_forms to students table columns
+                    // Use N/A or default values for columns not present in admission_forms
+                    $stmt_insert->execute([
+                        $student_id,
+                        $admission_data['child_first_name'] ?? '',
+                        $admission_data['child_last_name'] ?? '',
+                        $admission_data['applying_for_class'] ?? '', // Assuming this maps to 'class'
+                        $admission_data['created_at'] ?? date('Y-m-d'), // Using created_at as admission_date, default to today
+                        $admission_data['registration_number'] ?? '', // Assuming column exists in admission_forms
+                        $admission_data['grade'] ?? '', // Assuming column exists in admission_forms
+                        $admission_data['gender'] ?? '', // Assuming column exists in admission_forms
+                        $admission_data['age'] ?? 0, // Assuming column exists in admission_forms, default to 0
+                        $admission_data['parent_name'] ?? '', // Assuming column exists in admission_forms
+                        $admission_data['parent_phone'] ?? '', // Assuming column exists in admission_forms
+                        $admission_data['parent_email'] ?? '', // Assuming column exists in admission_forms
+                        $admission_data['address'] ?? '', // Assuming column exists in admission_forms
+                        $admission_data['city'] ?? '', // Assuming column exists in admission_forms
+                        $admission_data['country'] ?? '' // Assuming column exists in admission_forms
+                    ]);
+
+                     // Update admission form status
+                    $stmt = $db->prepare("UPDATE admission_forms SET status = 'approved', is_processed = 1 WHERE id = ?");
+                    $stmt->execute([$form_id]);
+                    $success = 'Application has been approved and student added.';
+                } else {
+                    $error = 'Could not fetch admission form data.';
+                }
             } elseif ($action === 'reject') {
                 // Update admission form status
                 $stmt = $db->prepare("UPDATE admission_forms SET status = 'rejected', is_processed = 1 WHERE id = ?");

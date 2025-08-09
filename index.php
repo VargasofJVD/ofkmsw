@@ -15,7 +15,11 @@ include_once 'includes/header.php';
                 <h1 class="text-4xl md:text-5xl font-bold mb-4">Welcome to Krisah Montessori School</h1>
                 <p class="text-xl mb-6">Nurturing young minds through the Montessori approach in the Western Region of Ghana.</p>
                 <div class="flex flex-wrap gap-4">
-                    <a href="pages/admissions.php" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300">Apply Now</a>
+                    <a href="pages/contact.php" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300">Contact Us</a>
+                    <button onclick="openNewsletterModal()" class="bg-secondary hover:bg-secondary-dark text-white font-bold py-3 px-6 rounded-lg transition duration-300 flex items-center">
+                        <i class="fas fa-envelope mr-2"></i>
+                        Subscribe to Newsletter
+                    </button>
                     <a href="pages/about.php" class="bg-white hover:bg-gray-100 text-primary font-bold py-3 px-6 rounded-lg transition duration-300">Learn More</a>
                 </div>
             </div>
@@ -151,7 +155,7 @@ include_once 'includes/header.php';
         </div>
         
         <div class="text-center mt-10">
-            <a href="pages/news.php" class="bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-lg transition duration-300">View All News & Events</a>
+            <a href="pages/news-events.php" class="bg-primary hover:bg-primary-dark text-white font-bold py-3 px-6 rounded-lg transition duration-300">View All News & Events</a>
         </div>
     </div>
 </section>
@@ -211,8 +215,12 @@ include_once 'includes/header.php';
         <h2 class="text-3xl font-bold mb-6">Ready to Join Our Community?</h2>
         <p class="text-xl mb-8 max-w-3xl mx-auto">Take the first step towards providing your child with a transformative Montessori education experience.</p>
         <div class="flex flex-wrap justify-center gap-4">
-            <a href="pages/admissions.php" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300">Apply for Admission</a>
-            <a href="pages/contact.php" class="bg-transparent hover:bg-secondary-light border-2 border-white text-white font-bold py-3 px-6 rounded-lg transition duration-300">Contact Us</a>
+            <a href="pages/contact.php" class="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300">Contact Us</a>
+            <button onclick="openNewsletterModal()" class="bg-white hover:bg-gray-100 text-secondary font-bold py-3 px-6 rounded-lg transition duration-300 flex items-center">
+                <i class="fas fa-envelope mr-2"></i>
+                Subscribe to Newsletter
+            </button>
+            <a href="pages/about.php" class="bg-transparent hover:bg-secondary-light border-2 border-white text-white font-bold py-3 px-6 rounded-lg transition duration-300">Learn More</a>
         </div>
     </div>
 </section>

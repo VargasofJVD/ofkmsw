@@ -45,7 +45,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <meta name="description" content="<?php echo htmlspecialchars($page_description ?? 'Krisah Montessori School - Quality Montessori education in the Western Region of Ghana'); ?>">
     
     <!-- Favicon -->
-    <link rel="icon" href="/ofkms/assets/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/ofkmsw/assets/images/favicon.ico" type="image/x-icon">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -83,11 +83,11 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/ofkms/assets/css/style.css">
+    <link rel="stylesheet" href="/ofkmsw/assets/css/style.css">
     
     <!-- Custom JavaScript -->
-    <script src="/ofkms/assets/js/main.js"></script>
-    <script src="/ofkms/assets/js/mobile-menu.js"></script>
+    <script src="/ofkmsw/assets/js/main.js"></script>
+    <script src="/ofkmsw/assets/js/mobile-menu.js"></script>
 </head>
 <body class="font-sans text-gray-800 min-h-screen flex flex-col">
     <!-- Header -->
@@ -119,8 +119,8 @@ $current_page = basename($_SERVER['PHP_SELF']);
             <!-- Main Navigation -->
             <nav class="py-4 flex flex-wrap justify-between items-center">
                 <!-- Logo -->
-                <a href="/ofkms/index.php" class="flex items-center space-x-3">
-                    <img src="/ofkms/assets/images/logo.png" alt="Krisah Montessori School" class="h-12">
+                <a href="/ofkmsw/index.php" class="flex items-center space-x-3">
+                    <img src="/ofkmsw/assets/images/logo.png" alt="Krisah Montessori School" class="h-12">
                     <div>
                         <h1 class="text-xl font-bold text-primary">Krisah Montessori</h1>
                         <p class="text-xs text-gray-600">Excellence in Education</p>
@@ -136,37 +136,31 @@ $current_page = basename($_SERVER['PHP_SELF']);
                 <div id="nav-links" class="hidden md:flex w-full md:w-auto mt-4 md:mt-0 bg-white md:bg-transparent fixed md:relative inset-0 md:inset-auto top-[120px] md:top-auto shadow-lg md:shadow-none z-50 transition-all duration-300 ease-in-out">
                     <ul class="flex flex-col md:flex-row md:space-x-6 space-y-2 md:space-y-0 p-4 md:p-0 w-full md:w-auto">
                         <li class="md:hidden">
-                            <a href="/ofkms/pages/admissions.php" class="block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 text-center">Apply Now</a>
+                            <a href="/ofkmsw/pages/contact.php" class="block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 text-center">Contact Us</a>
                         </li>
                         <li>
-                            <a href="/ofkms/index.php" class="block <?php echo $current_page == 'index.php' ? 'text-secondary font-semibold' : 'text-gray-700 hover:text-primary'; ?>">Home</a>
+                            <a href="/ofkmsw/index.php" class="block <?php echo $current_page == 'index.php' ? 'text-secondary font-semibold' : 'text-gray-700 hover:text-primary'; ?>">Home</a>
                         </li>
                         <li>
-                            <a href="/ofkms/pages/about.php" class="block <?php echo $current_page == 'about.php' ? 'text-secondary font-semibold' : 'text-gray-700 hover:text-primary'; ?>">About Us</a>
+                            <a href="/ofkmsw/pages/about.php" class="block <?php echo $current_page == 'about.php' ? 'text-secondary font-semibold' : 'text-gray-700 hover:text-primary'; ?>">About Us</a>
                         </li>
                         <li>
-                            <a href="/ofkms/pages/academics.php" class="block <?php echo $current_page == 'academics.php' ? 'text-secondary font-semibold' : 'text-gray-700 hover:text-primary'; ?>">Academics</a>
+                            <a href="/ofkmsw/pages/academics.php" class="block <?php echo $current_page == 'academics.php' ? 'text-secondary font-semibold' : 'text-gray-700 hover:text-primary'; ?>">Academics</a>
                         </li>
                         <li>
-                            <a href="/ofkms/pages/admissions.php" class="block <?php echo $current_page == 'admissions.php' ? 'text-secondary font-semibold' : 'text-gray-700 hover:text-primary'; ?>">Admissions</a>
+                            <a href="/ofkmsw/pages/news-events.php" class="block <?php echo $current_page == 'news-events.php' ? 'text-secondary font-semibold' : 'text-gray-700 hover:text-primary'; ?>">News & Events</a>
                         </li>
                         <li>
-                            <a href="/ofkms/pages/news-events.php" class="block <?php echo $current_page == 'news-events.php' ? 'text-secondary font-semibold' : 'text-gray-700 hover:text-primary'; ?>">News & Events</a>
+                            <a href="/ofkmsw/pages/testimonials.php" class="block <?php echo $current_page == 'testimonials.php' ? 'text-secondary font-semibold' : 'text-gray-700 hover:text-primary'; ?>">Testimonials</a>
                         </li>
                         <li>
-                            <a href="/ofkms/pages/gallery.php" class="block <?php echo $current_page == 'gallery.php' ? 'text-secondary font-semibold' : 'text-gray-700 hover:text-primary'; ?>">Gallery</a>
-                        </li>
-                        <li>
-                            <a href="/ofkms/pages/testimonials.php" class="block <?php echo $current_page == 'testimonials.php' ? 'text-secondary font-semibold' : 'text-gray-700 hover:text-primary'; ?>">Testimonials</a>
-                        </li>
-                        <li>
-                            <a href="/ofkms/pages/contact.php" class="block <?php echo $current_page == 'contact.php' ? 'text-secondary font-semibold' : 'text-gray-700 hover:text-primary'; ?>">Contact</a>
+                            <a href="/ofkmsw/pages/contact.php" class="block <?php echo $current_page == 'contact.php' ? 'text-secondary font-semibold' : 'text-gray-700 hover:text-primary'; ?>">Contact</a>
                         </li>
                     </ul>
                 </div>
                 
                 <!-- CTA Button (Desktop Only) -->
-                <a href="/ofkms/pages/admissions.php" class="hidden md:block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ml-4">Apply Now</a>
+                <a href="/ofkmsw/pages/contact.php" class="hidden md:block bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-lg transition duration-300 ml-4">Contact Us</a>
             </nav>
         </div>
     </header>

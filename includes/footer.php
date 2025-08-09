@@ -31,12 +31,12 @@
                 <div>
                     <h3 class="text-xl font-bold mb-4">Quick Links</h3>
                     <ul class="space-y-2">
-                        <li><a href="/ofkms/index.php" class="hover:text-secondary transition duration-300">Home</a></li>
-                        <li><a href="/ofkms/pages/about.php" class="hover:text-secondary transition duration-300">About Us</a></li>
-                        <li><a href="/ofkms/pages/academics.php" class="hover:text-secondary transition duration-300">Academics</a></li>
-                        <li><a href="/ofkms/pages/admissions.php" class="hover:text-secondary transition duration-300">Admissions</a></li>
-                        <li><a href="/ofkms/pages/news.php" class="hover:text-secondary transition duration-300">News & Events</a></li>
-                        <li><a href="/ofkms/pages/gallery.php" class="hover:text-secondary transition duration-300">Gallery</a></li>
+                        <li><a href="/ofkmsw/index.php" class="hover:text-secondary transition duration-300">Home</a></li>
+                        <li><a href="/ofkmsw/pages/about.php" class="hover:text-secondary transition duration-300">About Us</a></li>
+                        <li><a href="/ofkmsw/pages/academics.php" class="hover:text-secondary transition duration-300">Academics</a></li>
+                        <li><a href="/ofkmsw/pages/contact.php" class="hover:text-secondary transition duration-300">Contact</a></li>
+                        <li><a href="/ofkmsw/pages/news-events.php" class="hover:text-secondary transition duration-300">News & Events</a></li>
+                        <li><a href="/ofkmsw/pages/testimonials.php" class="hover:text-secondary transition duration-300">Testimonials</a></li>
                     </ul>
                 </div>
                 
@@ -63,12 +63,10 @@
                 <div>
                     <h3 class="text-xl font-bold mb-4">Newsletter</h3>
                     <p class="mb-4">Subscribe to our newsletter for updates on school events and activities.</p>
-                    <form action="/ofkms/includes/subscribe.php" method="post" class="flex">
-                        <input type="email" name="email" placeholder="Your email address" required class="px-4 py-2 w-full rounded-l-lg focus:outline-none text-gray-800">
-                        <button type="submit" class="bg-secondary hover:bg-secondary-dark px-4 py-2 rounded-r-lg transition duration-300">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </form>
+                    <button onclick="openNewsletterModal()" class="w-full bg-secondary hover:bg-secondary-dark text-white font-bold py-3 px-6 rounded-lg transition duration-300 flex items-center justify-center">
+                        <i class="fas fa-envelope mr-2"></i>
+                        Subscribe to Newsletter
+                    </button>
                 </div>
             </div>
             
@@ -92,12 +90,15 @@
     </script>
     
     <!-- Custom JavaScript -->
-    <script src="/ofkms/assets/js/main.js"></script>
+    <script src="/ofkmsw/assets/js/main.js"></script>
     
     <?php if (isset($page_scripts)): ?>
         <?php foreach ($page_scripts as $script): ?>
             <script src="<?php echo $script; ?>"></script>
         <?php endforeach; ?>
     <?php endif; ?>
+    
+    <!-- Include Newsletter Modal -->
+    <?php include_once __DIR__ . '/newsletter-modal.php'; ?>
 </body>
 </html>

@@ -195,25 +195,9 @@ $page_title = 'News & Events Management';
                     <i class="fas fa-newspaper w-6"></i>
                     <span>News & Events</span>
                 </a>
-                <a href="gallery.php" class="flex items-center space-x-2 p-2 rounded">
-                    <i class="fas fa-images w-6"></i>
-                    <span>Gallery</span>
-                </a>
                 <a href="testimonials.php" class="flex items-center space-x-2 p-2 rounded">
                     <i class="fas fa-quote-right w-6"></i>
                     <span>Testimonials</span>
-                </a>
-                <a href="admissions.php" class="flex items-center space-x-2 p-2 rounded">
-                    <i class="fas fa-user-plus w-6"></i>
-                    <span>Admissions</span>
-                </a>
-                <a href="students.php" class="flex items-center space-x-2 p-2 rounded">
-                    <i class="fas fa-user-graduate w-6"></i>
-                    <span>Students</span>
-                </a>
-                <a href="messages.php" class="flex items-center space-x-2 p-2 rounded">
-                    <i class="fas fa-envelope w-6"></i>
-                    <span>Messages</span>
                 </a>
                 <a href="settings.php" class="flex items-center space-x-2 p-2 rounded">
                     <i class="fas fa-cog w-6"></i>

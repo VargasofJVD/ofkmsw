@@ -26,33 +26,29 @@ $admin_role = $_SESSION['admin_role'] ?? 'staff';
 try {
     $db = getDbConnection();
     
-    // Count students
-    $stmt = $db->query("SELECT COUNT(*) as student_count FROM students");
-    $student_count = $stmt->fetch()['student_count'] ?? 0;
-    
     // Count news/events
     $stmt = $db->query("SELECT COUNT(*) as news_count FROM news_events");
     $news_count = $stmt->fetch()['news_count'] ?? 0;
     
-    // Count gallery items
-    $stmt = $db->query("SELECT COUNT(*) as gallery_count FROM gallery");
-    $gallery_count = $stmt->fetch()['gallery_count'] ?? 0;
+    // Count testimonials
+    $stmt = $db->query("SELECT COUNT(*) as testimonial_count FROM testimonials");
+    $testimonial_count = $stmt->fetch()['testimonial_count'] ?? 0;
     
-    // Count unprocessed admission forms
-    $stmt = $db->query("SELECT COUNT(*) as form_count FROM admission_forms WHERE is_processed = 0");
-    $form_count = $stmt->fetch()['form_count'] ?? 0;
+    // Count pending testimonials
+    $stmt = $db->query("SELECT COUNT(*) as pending_count FROM pending_testimonials WHERE status = 'pending'");
+    $pending_count = $stmt->fetch()['pending_count'] ?? 0;
     
-    // Count unread contact messages
-    $stmt = $db->query("SELECT COUNT(*) as message_count FROM contact_messages WHERE is_read = 0");
-    $message_count = $stmt->fetch()['message_count'] ?? 0;
-    
-    // Get recent admission forms
-    $stmt = $db->query("SELECT * FROM admission_forms ORDER BY created_at DESC LIMIT 5");
-    $recent_forms = $stmt->fetchAll();
+    // Count newsletter subscribers
+    $stmt = $db->query("SELECT COUNT(*) as subscriber_count FROM newsletter_subscribers WHERE is_active = 1");
+    $subscriber_count = $stmt->fetch()['subscriber_count'] ?? 0;
     
     // Get recent news/events
     $stmt = $db->query("SELECT * FROM news_events ORDER BY created_at DESC LIMIT 5");
     $recent_news = $stmt->fetchAll();
+    
+    // Get recent pending testimonials
+    $stmt = $db->query("SELECT * FROM pending_testimonials WHERE status = 'pending' ORDER BY created_at DESC LIMIT 5");
+    $recent_pending = $stmt->fetchAll();
 } catch (PDOException $e) {
     error_log('Dashboard error: ' . $e->getMessage());
     $error = 'An error occurred while loading dashboard data.';
@@ -154,30 +150,11 @@ $page_title = 'Admin Dashboard';
                     <i class="fas fa-newspaper w-6"></i>
                     <span>News & Events</span>
                 </a>
-                <a href="gallery.php" class="flex items-center space-x-2 p-2 rounded">
-                    <i class="fas fa-images w-6"></i>
-                    <span>Gallery</span>
-                </a>
                 <a href="testimonials.php" class="flex items-center space-x-2 p-2 rounded">
                     <i class="fas fa-quote-right w-6"></i>
                     <span>Testimonials</span>
-                </a>
-                <a href="admissions.php" class="flex items-center space-x-2 p-2 rounded">
-                    <i class="fas fa-user-plus w-6"></i>
-                    <span>Admissions</span>
-                    <?php if (isset($form_count) && $form_count > 0): ?>
-                        <span class="bg-secondary text-white text-xs rounded-full px-2 py-1 ml-auto"><?php echo $form_count; ?></span>
-                    <?php endif; ?>
-                </a>
-                <a href="students.php" class="flex items-center space-x-2 p-2 rounded">
-                    <i class="fas fa-user-graduate w-6"></i>
-                    <span>Students</span>
-                </a>
-                <a href="messages.php" class="flex items-center space-x-2 p-2 rounded">
-                    <i class="fas fa-envelope w-6"></i>
-                    <span>Messages</span>
-                    <?php if (isset($message_count) && $message_count > 0): ?>
-                        <span class="bg-secondary text-white text-xs rounded-full px-2 py-1 ml-auto"><?php echo $message_count; ?></span>
+                    <?php if (isset($pending_count) && $pending_count > 0): ?>
+                        <span class="bg-secondary text-white text-xs rounded-full px-2 py-1 ml-auto"><?php echo $pending_count; ?></span>
                     <?php endif; ?>
                 </a>
                 <a href="settings.php" class="flex items-center space-x-2 p-2 rounded">
@@ -215,18 +192,6 @@ $page_title = 'Admin Dashboard';
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-blue-100 text-blue-500 mr-4">
-                            <i class="fas fa-user-graduate text-2xl"></i>
-                        </div>
-                        <div>
-                            <p class="text-gray-500 text-sm">Total Students</p>
-                            <h3 class="text-2xl font-bold"><?php echo number_format($student_count ?? 0); ?></h3>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-lg shadow-md p-6">
-                    <div class="flex items-center">
                         <div class="p-3 rounded-full bg-green-100 text-green-500 mr-4">
                             <i class="fas fa-newspaper text-2xl"></i>
                         </div>
@@ -239,12 +204,12 @@ $page_title = 'Admin Dashboard';
                 
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <div class="flex items-center">
-                        <div class="p-3 rounded-full bg-purple-100 text-purple-500 mr-4">
-                            <i class="fas fa-images text-2xl"></i>
+                        <div class="p-3 rounded-full bg-blue-100 text-blue-500 mr-4">
+                            <i class="fas fa-quote-right text-2xl"></i>
                         </div>
                         <div>
-                            <p class="text-gray-500 text-sm">Gallery Items</p>
-                            <h3 class="text-2xl font-bold"><?php echo number_format($gallery_count ?? 0); ?></h3>
+                            <p class="text-gray-500 text-sm">Testimonials</p>
+                            <h3 class="text-2xl font-bold"><?php echo number_format($testimonial_count ?? 0); ?></h3>
                         </div>
                     </div>
                 </div>
@@ -252,11 +217,23 @@ $page_title = 'Admin Dashboard';
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <div class="flex items-center">
                         <div class="p-3 rounded-full bg-yellow-100 text-yellow-500 mr-4">
-                            <i class="fas fa-user-plus text-2xl"></i>
+                            <i class="fas fa-clock text-2xl"></i>
                         </div>
                         <div>
-                            <p class="text-gray-500 text-sm">Pending Applications</p>
-                            <h3 class="text-2xl font-bold"><?php echo number_format($form_count ?? 0); ?></h3>
+                            <p class="text-gray-500 text-sm">Pending Reviews</p>
+                            <h3 class="text-2xl font-bold"><?php echo number_format($pending_count ?? 0); ?></h3>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-lg shadow-md p-6">
+                    <div class="flex items-center">
+                        <div class="p-3 rounded-full bg-purple-100 text-purple-500 mr-4">
+                            <i class="fas fa-envelope text-2xl"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 text-sm">Newsletter Subscribers</p>
+                            <h3 class="text-2xl font-bold"><?php echo number_format($subscriber_count ?? 0); ?></h3>
                         </div>
                     </div>
                 </div>
@@ -264,48 +241,38 @@ $page_title = 'Admin Dashboard';
             
             <!-- Recent Activity -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <!-- Recent Applications -->
+                <!-- Recent Pending Testimonials -->
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-lg font-bold text-gray-800">Recent Applications</h2>
-                        <a href="admissions.php" class="text-primary hover:text-primary-dark text-sm">View All</a>
+                        <h2 class="text-lg font-bold text-gray-800">Pending Testimonials</h2>
+                        <a href="testimonials.php" class="text-primary hover:text-primary-dark text-sm">View All</a>
                     </div>
                     
-                    <?php if (isset($recent_forms) && count($recent_forms) > 0): ?>
-                        <div class="overflow-x-auto">
-                            <table class="min-w-full">
-                                <thead>
-                                    <tr class="text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                                        <th class="pb-2">Name</th>
-                                        <th class="pb-2">Class</th>
-                                        <th class="pb-2">Date</th>
-                                        <th class="pb-2">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-200">
-                                    <?php foreach ($recent_forms as $form): ?>
-                                        <tr>
-                                            <td class="py-3 text-sm">
-                                                <?php echo htmlspecialchars($form['child_first_name'] . ' ' . $form['child_last_name']); ?>
-                                            </td>
-                                            <td class="py-3 text-sm">
-                                                <?php echo ucfirst(str_replace('_', ' ', htmlspecialchars($form['applying_for_class']))); ?>
-                                            </td>
-                                            <td class="py-3 text-sm">
-                                                <?php echo date('M d, Y', strtotime($form['created_at'])); ?>
-                                            </td>
-                                            <td class="py-3 text-sm">
-                                                <a href="admission-detail.php?id=<?php echo $form['id']; ?>" class="text-primary hover:text-primary-dark">
-                                                    <i class="fas fa-eye"></i> View
-                                                </a>
-                                            </td>
-                                        </tr>
+                    <?php if (isset($recent_pending) && count($recent_pending) > 0): ?>
+                        <div class="space-y-4">
+                            <?php foreach ($recent_pending as $testimonial): ?>
+                                <div class="border-l-4 border-yellow-400 pl-4 py-2">
+                                    <div class="flex justify-between items-start">
+                                        <div>
+                                            <h3 class="font-semibold"><?php echo htmlspecialchars($testimonial['name']); ?></h3>
+                                            <p class="text-sm text-gray-500"><?php echo ucfirst(htmlspecialchars($testimonial['role'])); ?></p>
+                                            <p class="text-sm text-gray-600 mt-1"><?php echo substr(htmlspecialchars($testimonial['content']), 0, 100); ?>...</p>
+                                        </div>
+                                        <span class="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">Pending</span>
+                                    </div>
+                                    <div class="mt-2">
+                                        <a href="testimonials.php?action=approve&id=<?php echo $testimonial['id']; ?>" class="text-green-600 hover:text-green-800 text-sm mr-2">
+                                            <i class="fas fa-check"></i> Approve
+                                        </a>
+                                        <a href="testimonials.php?action=reject&id=<?php echo $testimonial['id']; ?>" class="text-red-600 hover:text-red-800 text-sm">
+                                            <i class="fas fa-times"></i> Reject
+                                        </a>
+                                    </div>
+                                </div>
                                     <?php endforeach; ?>
-                                </tbody>
-                            </table>
                         </div>
                     <?php else: ?>
-                        <p class="text-gray-500 text-center py-4">No recent applications</p>
+                        <p class="text-gray-500 text-center py-4">No pending testimonials</p>
                     <?php endif; ?>
                 </div>
                 

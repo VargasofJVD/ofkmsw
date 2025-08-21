@@ -94,27 +94,7 @@ $current_page = basename($_SERVER['PHP_SELF']);
     <header class="bg-white shadow-md">
         <div class="container mx-auto px-4">
             <!-- Top Bar -->
-            <div class="py-2 border-b border-gray-200 flex justify-between items-center text-sm">
-                <div class="flex items-center space-x-4">
-                    <a href="mailto:<?php echo htmlspecialchars($settings['school_email'] ?? 'info@krisahmontessori.com'); ?>" class="text-gray-600 hover:text-primary">
-                        <i class="fas fa-envelope mr-1"></i> <?php echo htmlspecialchars($settings['school_email'] ?? 'info@krisahmontessori.com'); ?>
-                    </a>
-                    <a href="tel:<?php echo htmlspecialchars($settings['school_phone'] ?? '+233 XX XXX XXXX'); ?>" class="text-gray-600 hover:text-primary">
-                        <i class="fas fa-phone mr-1"></i> <?php echo htmlspecialchars($settings['school_phone'] ?? '+233 XX XXX XXXX'); ?>
-                    </a>
-                </div>
-                <div class="flex items-center space-x-3">
-                    <a href="<?php echo htmlspecialchars($settings['facebook_url'] ?? '#'); ?>" class="text-gray-600 hover:text-primary" target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-facebook-f"></i>
-                    </a>
-                    <a href="<?php echo htmlspecialchars($settings['instagram_url'] ?? '#'); ?>" class="text-gray-600 hover:text-primary" target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-instagram"></i>
-                    </a>
-                    <a href="<?php echo htmlspecialchars($settings['twitter_url'] ?? '#'); ?>" class="text-gray-600 hover:text-primary" target="_blank" rel="noopener noreferrer">
-                        <i class="fab fa-twitter"></i>
-                    </a>
-                </div>
-            </div>
+            
             
             <!-- Main Navigation -->
             <nav class="py-4 flex flex-wrap justify-between items-center">
